@@ -1,35 +1,33 @@
-import { TestBed, async } from '@angular/core/testing';
+import { ComponentFixture, TestBed, async, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { By } from '@angular/platform-browser';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 
 describe('AppComponent', () => {
-  beforeEach(async(() => {
+  let component: AppComponent;
+  let fixture: ComponentFixture<AppComponent>;
+  beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
-    }).compileComponents();
+      imports: [ReactiveFormsModule],
+      declarations: [AppComponent]
+    });
+    fixture = TestBed.createComponent(AppComponent);
+    component = fixture.componentInstance;
+  });
+
+
+  it ('should bind the configured value', async(() => {
+    let select:HTMLSelectElement = fixture.debugElement.query(By.css('.select-profile')).nativeElement;
+    let p = fixture.debugElement.nativeElement.querySelector('p');
+    fixture.detectChanges();
+    component.selectedProfile = new FormControl(component.profiles[1]);
+    fixture.detectChanges();
+    fixture.whenStable().then(() => {
+      let text = select.options[select.selectedIndex].label;
+      expect(text).toBe('Manager');
+      expect(p.textContent).toBe('Manager');
+    })
   }));
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app).toBeTruthy();
-  });
-
-  it(`should have as title 'my-app'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.debugElement.componentInstance;
-    expect(app.title).toEqual('my-app');
-  });
-
-  it('should render title in a h1 tag', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.debugElement.nativeElement;
-    expect(compiled.querySelector('h1').textContent).toContain('Welcome to my-app!');
-  });
 });
